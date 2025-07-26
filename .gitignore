@@ -1,0 +1,191 @@
+# WordPress Theme Development .gitignore
+
+# Node.js Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Package lock files (choose one based on your package manager)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build outputs
+dist/
+build/
+*.tgz
+*.tar.gz
+
+# Vite specific
+.vite/
+vite.config.js.timestamp-*
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.staging
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+.classpath
+
+# System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.cache
+
+# WordPress specific
+wp-config.php
+wp-content/uploads/
+wp-content/cache/
+wp-content/backup*/
+wp-content/backups/
+wp-content/updraft*/
+wp-content/upgrade/
+wp-content/mu-plugins/
+.htaccess
+sitemap.xml
+sitemap.xml.gz
+
+# WordPress core files (if included)
+/wp-admin/
+/wp-includes/
+/wp-*.php
+/xmlrpc.php
+/readme.html
+/license.txt
+
+# Plugin directories (if not needed)
+wp-content/plugins/
+!wp-content/plugins/.gitkeep
+
+# Theme development exceptions
+!wp-content/themes/therosessom/
+
+# Local development
+.vagrant/
+Vagrantfile.local
+.phpstorm.meta.php
+
+# Sass/SCSS
+.sass-cache/
+*.css.map
+*.scss.map
+
+# Composer
+vendor/
+composer.lock
+
+# Local WordPress development tools
+Local Sites.localized/
+app/sql/
+app/logs/
+
+# Backup files
+*.sql
+*.sql.gz
+*.backup
+*-backup-*
+
+# Error and access logs
+error_log
+access_log
+*.log
+
+# FTP/SFTP configs
+sftp-config.json
+.ftpconfig
+.deployconfig
+
+# ESLint cache
+.eslintcache
+
+# Prettier cache
+.prettiercache
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# Optional npm cache directory
+.npm
+
+# Yarn Integrity file
+.yarn-integrity
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# VS Code settings (project specific)
+.vscode/settings.json
+.vscode/launch.json
+.vscode/extensions.json
+
+# MacOS
+.AppleDouble
+.LSOverride
+
+# Icon must end with two \r
+Icon
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.TemporaryItems
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Theme specific build artifacts
+assets/css/*.css
+assets/js/*.min.js
+style.css.map
+
+# WordPress debug files
+debug.log
+wp-errors.log
+
+# Security files
+.well-known/
+security.txt
+
+# Custom additions for this project
+# Add any project-specific files or patterns here

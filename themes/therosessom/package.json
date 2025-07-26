@@ -1,0 +1,72 @@
+{
+  "name": "therosessom",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Modern WordPress Theme with ACF Pro and Tailwind CSS",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview",
+    "watch": "vite build --watch",
+    "lint:js": "eslint assets/js/**/*.js --fix",
+    "lint:css": "stylelint assets/css/**/*.{css,scss} --fix",
+    "format": "prettier --write assets/**/*.{js,css,scss}",
+    "clean": "rm -rf dist",
+    "prebuild": "npm run clean",
+    "zip": "npm run build && zip -r therosessom.zip . -x 'node_modules/*' 'assets/*' '.git/*' '*.log' 'package-lock.json' 'README.md'"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.7.0",
+    "@vitejs/plugin-legacy": "^5.4.1",
+    "autoprefixer": "^10.4.19",
+    "cssnano": "^7.0.4",
+    "eslint": "^9.7.0",
+    "eslint-config-prettier": "^9.1.0",
+    "postcss": "^8.4.39",
+    "postcss-import": "^16.1.0",
+    "prettier": "^3.3.3",
+    "sass": "^1.77.8",
+    "stylelint": "^16.7.0",
+    "stylelint-config-standard-scss": "^13.1.0",
+    "tailwindcss": "^3.4.6",
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/forms": "^0.5.7",
+    "@tailwindcss/typography": "^0.5.13",
+    "vite": "^5.4.19"
+  },
+  "dependencies": {
+    "swiper": "^11.1.5",
+    "aos": "^2.3.4",
+    "lozad": "^1.16.0",
+    "gsap": "^3.12.2",
+    "lightbox2": "^2.11.4"
+  },
+  "keywords": [
+    "wordpress",
+    "theme",
+    "photography",
+    "jiography",
+    "therosessom",
+    "tailwindcss",
+    "vite",
+    "acf-pro"
+  ],
+  "author": "Rosa Kang",
+  "license": "GPL-2.0-or-later",
+  "homepage": "https://therosessom.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rosa-kang/"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ],
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}

@@ -1,0 +1,15 @@
+/*
+Theme Name: therosessom
+Description: Modern Theme for Jiography.
+Author: Rosa Kang
+Version: 1.0.0
+License: GPL v2 or later
+Text Domain: therosessom
+Tags: photography, portfolio, modern, tailwind, responsive
+*/
+
+/* 
+All styles are now handled by Vite build system.
+Main stylesheet: assets/css/style.scss
+Built output: dist/css/style-[hash].css
+*/
