@@ -1,0 +1,49 @@
+/**
+ * Font Definitions for Therosessom Theme
+ * Custom font loading with modern CSS features
+ */
+
+// Perfectly Nineties - Regular
+@font-face {
+  font-family: 'Perfectly Nineties';
+  src: url('../fonts/perfectly-nineties.woff2') format('woff2');
+  font-display: swap;
+}
+
+// Perfectly Nineties - Bold (if available)
+@font-face {
+    font-family: 'Perfectly Nineties';
+    // Changed path to be absolute from the public/dist root, reflecting Vite's output config.
+    src: url('../fonts/perfectly-nineties.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0020-007F, U+AC00-D7AF;
+}
+
+// Heebo Font Import
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@100..900&display=swap');
+
+// CSS Custom Properties
+:root {
+    --font-primary: 'Perfectly Nineties', Georgia, serif;
+    --font-secondary: 'Heebo', system-ui, sans-serif;
+}
+
+// Base font application
+body {
+    font-family: var(--font-secondary);
+}
+
+// Primary font class
+.font-primary {
+    font-family: var(--font-primary);
+    font-feature-settings: "kern" 1, "liga" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+// Secondary font class
+.font-secondary {
+    font-family: var(--font-secondary);
+}

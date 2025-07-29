@@ -1,0 +1,23 @@
+@use 'variables' as *;
+/**
+* Footer
+*/
+
+#footer-menu-container {
+    width: 100%;
+
+    #footer-menu {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        align-items: center;
+        gap: 3rem;
+    }
+}
+
+/**
+* Horizontal Line
+*/
+.horizontal-line {
+    border: 0.5px solid black;
+}

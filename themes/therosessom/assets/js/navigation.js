@@ -1,99 +1,202 @@
 /**
- * File navigation.js.
- *
- * Handles toggling the navigation menu for small screens and enables TAB key
- * navigation support for dropdown menus.
+ * Navigation Module for therosessom Theme
+ * Integrated with main theme architecture
  */
-( function() {
-	const siteNavigation = document.getElementById( 'site-navigation' );
 
-	// Return early if the navigation doesn't exist.
-	if ( ! siteNavigation ) {
-		return;
-	}
+export class NavigationMenu {
+    constructor() {
+        this.config = {
+            DESKTOP_BREAKPOINT: 768,
+            DEBOUNCE_DELAY: 250,
+            selectors: {
+                navigation: '#site-navigation',
+                menuToggle: '#menu-toggle', 
+                menu: '#primary-menu',
+                menuLinks: '#primary-menu a'
+            },
+            classes: {
+                toggled: 'toggled',
+                menuOpen: 'menu-open'
+            }
+        };
 
-	const button = siteNavigation.getElementsByTagName( 'button' )[ 0 ];
+        this.elements = {};
+        this.state = {
+            isOpen: false,
+            isAnimating: false
+        };
 
-	// Return early if the button doesn't exist.
-	if ( 'undefined' === typeof button ) {
-		return;
-	}
+        this.init();
+    }
 
-	const menu = siteNavigation.getElementsByTagName( 'ul' )[ 0 ];
+    /**
+     * Initialize navigation
+     */
+    init() {
+        this.getElements();
+        
+        if (!this.validateElements()) {
+            console.warn('Navigation: Required elements not found');
+            return;
+        }
 
-	// Hide menu toggle button if menu is empty and return early.
-	if ( 'undefined' === typeof menu ) {
-		button.style.display = 'none';
-		return;
-	}
+        this.setupInitialState();
+        this.bindEvents();
+        
+        console.log('✅ Navigation module loaded');
+    }
 
-	if ( ! menu.classList.contains( 'nav-menu' ) ) {
-		menu.classList.add( 'nav-menu' );
-	}
+    /**
+     * Get DOM elements
+     */
+    getElements() {
+        const { selectors } = this.config;
+        
+        this.elements = {
+            navigation: document.querySelector(selectors.navigation),
+            menuToggle: document.querySelector(selectors.menuToggle),
+            menu: document.querySelector(selectors.menu),
+            body: document.body
+        };
 
-	// Toggle the .toggled class and the aria-expanded value each time the button is clicked.
-	button.addEventListener( 'click', function() {
-		siteNavigation.classList.toggle( 'toggled' );
+        this.updateMenuLinks();
+    }
 
-		if ( button.getAttribute( 'aria-expanded' ) === 'true' ) {
-			button.setAttribute( 'aria-expanded', 'false' );
-		} else {
-			button.setAttribute( 'aria-expanded', 'true' );
-		}
-	} );
+    updateMenuLinks() {
+        this.elements.menuLinks = document.querySelectorAll(this.config.selectors.menuLinks);
+    }
 
-	// Remove the .toggled class and set aria-expanded to false when the user clicks outside the navigation.
-	document.addEventListener( 'click', function( event ) {
-		const isClickInside = siteNavigation.contains( event.target );
+    validateElements() {
+        const { navigation, menuToggle, body } = this.elements;
+        return navigation && menuToggle && body;
+    }
 
-		if ( ! isClickInside ) {
-			siteNavigation.classList.remove( 'toggled' );
-			button.setAttribute( 'aria-expanded', 'false' );
-		}
-	} );
+    setupInitialState() {
+        this.elements.menuToggle.setAttribute('aria-expanded', 'false');
+        this.syncState();
+    }
 
-	// Get all the link elements within the menu.
-	const links = menu.getElementsByTagName( 'a' );
+    syncState() {
+        this.state.isOpen = this.elements.body.classList.contains(this.config.classes.menuOpen);
+    }
 
-	// Get all the link elements with children within the menu.
-	const linksWithChildren = menu.querySelectorAll( '.menu-item-has-children > a, .page_item_has_children > a' );
+    bindEvents() {
+        const { menuToggle } = this.elements;
 
-	// Toggle focus each time a menu link is focused or blurred.
-	for ( const link of links ) {
-		link.addEventListener( 'focus', toggleFocus, true );
-		link.addEventListener( 'blur', toggleFocus, true );
-	}
+        menuToggle.addEventListener('click', this.handleToggleClick.bind(this));
+        document.addEventListener('click', this.handleDocumentClick.bind(this));
+        document.addEventListener('keydown', this.handleKeydown.bind(this));
 
-	// Toggle focus each time a menu link with children receive a touch event.
-	for ( const link of linksWithChildren ) {
-		link.addEventListener( 'touchstart', toggleFocus, false );
-	}
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                this.handleResize();
+            }, this.config.DEBOUNCE_DELAY);
+        });
+    }
 
-	/**
-	 * Sets or removes .focus class on an element.
-	 */
-	function toggleFocus() {
-		if ( event.type === 'focus' || event.type === 'blur' ) {
-			let self = this;
-			// Move up through the ancestors of the current link until we hit .nav-menu.
-			while ( ! self.classList.contains( 'nav-menu' ) ) {
-				// On li elements toggle the class .focus.
-				if ( 'li' === self.tagName.toLowerCase() ) {
-					self.classList.toggle( 'focus' );
-				}
-				self = self.parentNode;
-			}
-		}
+    handleToggleClick(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        if (!this.state.isAnimating) {
+            this.toggleMenu();
+        }
+    }
 
-		if ( event.type === 'touchstart' ) {
-			const menuItem = this.parentNode;
-			event.preventDefault();
-			for ( const link of menuItem.parentNode.children ) {
-				if ( menuItem !== link ) {
-					link.classList.remove( 'focus' );
-				}
-			}
-			menuItem.classList.toggle( 'focus' );
-		}
-	}
-}() );
+    handleDocumentClick(event) {
+        if (!this.state.isOpen) return;
+
+        const { navigation } = this.elements;
+        
+        if (navigation.contains(event.target)) return;
+
+        this.closeMenu();
+    }
+
+    handleKeydown(event) {
+        if (event.key === 'Escape' && this.state.isOpen) {
+            event.preventDefault();
+            this.closeMenu();
+        }
+    }
+
+    handleResize() {
+        if (window.innerWidth >= this.config.DESKTOP_BREAKPOINT && this.state.isOpen) {
+            this.closeMenu();
+        }
+    }
+
+    async toggleMenu() {
+        this.state.isAnimating = true;
+        this.state.isOpen = !this.state.isOpen;
+
+        try {
+            await this.updateVisuals();
+            this.manageFocus();
+        } finally {
+            setTimeout(() => {
+                this.state.isAnimating = false;
+            }, 300);
+        }
+    }
+
+    async updateVisuals() {
+        const { navigation, menuToggle, body } = this.elements;
+        const { classes } = this.config;
+        const { isOpen } = this.state;
+
+        navigation.classList.toggle(classes.toggled, isOpen);
+        menuToggle.classList.toggle(classes.toggled, isOpen);  
+        body.classList.toggle(classes.menuOpen, isOpen);
+
+        menuToggle.setAttribute('aria-expanded', isOpen.toString());
+
+        return new Promise(resolve => setTimeout(resolve, 50));
+    }
+
+    manageFocus() {
+        const { isOpen } = this.state;
+        
+        if (isOpen) {
+            this.updateMenuLinks();
+            const firstLink = this.elements.menuLinks[0];
+            if (firstLink) {
+                setTimeout(() => firstLink.focus(), 100);
+            }
+        } else {
+            this.elements.menuToggle.focus();
+        }
+    }
+
+    closeMenu() {
+        if (this.state.isOpen && !this.state.isAnimating) {
+            this.toggleMenu();
+        }
+    }
+
+    openMenu() {
+        if (!this.state.isOpen && !this.state.isAnimating) {
+            this.toggleMenu();
+        }
+    }
+
+    getState() {
+        return {
+            isOpen: this.state.isOpen,
+            isAnimating: this.state.isAnimating,
+            elements: Object.keys(this.elements).reduce((acc, key) => {
+                acc[key] = !!this.elements[key];
+                return acc;
+            }, {})
+        };
+    }
+}
+
+// Auto-initialize if not using module system
+if (typeof window !== 'undefined' && !window.TheRosessomTheme) {
+    document.addEventListener('DOMContentLoaded', () => {
+        window.navigationMenu = new NavigationMenu();
+    });
+}

@@ -1,51 +1,26 @@
-/**
+@use 'tailwindcss/base';
+@use 'tailwindcss/components';
+@use 'tailwindcss/utilities';
+ 
+ // Import Styles
+ @use 'variables' as *;
+ @use 'font' as *;
+ @use 'layout' as *;
+ @use 'components' as *;
+
+ /**
  * Main Stylesheet for therosessom Theme
  * Modern WordPress Photography Theme with Tailwind CSS
  */
+@use 'navigation' as *;
 
-// Import Tailwind CSS
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
-
-// Import custom variables and mixins
-@import 'variables';
-@import 'mixins';
-
-// Base styles
-@import 'base/reset';
-@import 'base/typography';
-@import 'base/utilities';
-
-// Layout styles
-@import 'layout/header';
-@import 'layout/footer';
-@import 'layout/navigation';
-
-// Component styles
-@import 'components/hero';
-@import 'components/hero-slider';
-@import 'components/intro';
-@import 'components/callout';
-@import 'components/cards';
-@import 'components/portfolio';
-@import 'components/testimonials';
-@import 'components/forms';
-@import 'components/buttons';
-@import 'components/ig-feed';
-
-// WordPress specific styles
-@import 'wordpress/content';
-@import 'wordpress/comments';
-@import 'wordpress/widgets';
-@import 'wordpress/gallery';
 
 // Custom photography theme styles
 .therosessom-theme {
   // Global theme styles
-  font-family: theme('fontFamily.body');
+  font-family: theme('fontFamily.body'); // This is a Tailwind function, not a Sass variable
   line-height: 1.6;
-  color: theme('colors.neutral.800');
+  color: theme('colors.neutral.800'); // This is a Tailwind function, not a Sass variable
   
   // Smooth scrolling
   scroll-behavior: smooth;
@@ -54,48 +29,6 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-}
-
-// Photography specific utilities
-.image-container {
-  @apply relative overflow-hidden;
-  
-  &.aspect-photo {
-    @apply aspect-photo;
-  }
-  
-  &.aspect-portrait {
-    @apply aspect-portrait;
-  }
-  
-  &.aspect-square {
-    @apply aspect-square;
-  }
-  
-  img {
-    @apply w-full h-full object-cover transition-transform duration-500;
-    
-    &:hover {
-      @apply scale-110;
-    }
-  }
-}
-
-// Portfolio specific styles
-.portfolio-grid {
-  @apply grid gap-6;
-  
-  &.cols-2 {
-    @apply grid-cols-1 md:grid-cols-2;
-  }
-  
-  &.cols-3 {
-    @apply grid-cols-1 md:grid-cols-2 lg:grid-cols-3;
-  }
-  
-  &.cols-4 {
-    @apply grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
-  }
 }
 
 // Animation utilities

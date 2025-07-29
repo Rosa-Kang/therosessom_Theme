@@ -1,7 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    './**/*.php',
+    './*.php', 
+    './**/*.php', 
+    '!./node_modules/**/*.php', 
     './assets/js/**/*.js',
     './template-parts/**/*.php',
     './inc/**/*.php',
@@ -10,9 +12,10 @@ module.exports = {
   
   theme: {
     extend: {
-      // Custom colors for photography theme
+      // Colors using CSS variables from SCSS
       colors: {
         primary: {
+          light: 'var(--color-primary-light)',
           50: '#f8f9ff',
           100: '#e8eaff',
           200: '#d6dbff',
@@ -25,6 +28,7 @@ module.exports = {
           900: '#312e81',
         },
         secondary: {
+          light: 'var(--color-secondary-light)',
           50: '#fdf2f8',
           100: '#fce7f3',
           200: '#fbcfe8',
@@ -36,17 +40,18 @@ module.exports = {
           800: '#9d174d',
           900: '#831843',
         },
+        // Using CSS variables for gray colors from SCSS
         neutral: {
-          50: '#fafafa',
-          100: '#f5f5f5',
-          200: '#e5e5e5',
-          300: '#d4d4d4',
-          400: '#a3a3a3',
-          500: '#737373',
-          600: '#525252',
-          700: '#404040',
-          800: '#262626',
-          900: '#171717',
+          50: 'var(--color-gray-50)',
+          100: 'var(--color-gray-100)',
+          200: 'var(--color-gray-200)',
+          300: 'var(--color-gray-300)',
+          400: 'var(--color-gray-400)',
+          500: 'var(--color-gray-500)',
+          600: 'var(--color-gray-600)',
+          700: 'var(--color-gray-700)',
+          800: 'var(--color-gray-800)',
+          900: 'var(--color-gray-900)',
         },
         gold: {
           50: '#fefdf7',
@@ -59,13 +64,16 @@ module.exports = {
           700: '#b45309',
           800: '#92400e',
           900: '#78350f',
-        }
+        },
+        // Direct CSS variable mappings
+        white: 'var(--color-white)',
+        black: 'var(--color-black)',
       },
       
-      // Custom fonts
+      // Custom fonts using CSS variables
       fontFamily: {
         'sans': ['Inter', 'system-ui', 'sans-serif'],
-        'serif': ['Playfair Display', 'Georgia', 'serif'],
+        'primary': ['Perfectly Nineties', 'Georgia', 'serif'],
         'mono': ['JetBrains Mono', 'monospace'],
         'display': ['Playfair Display', 'Georgia', 'serif'],
         'body': ['Inter', 'system-ui', 'sans-serif']
@@ -236,7 +244,7 @@ module.exports = {
           }
         },
         
-        // Button components
+        // Button components using CSS variables
         '.btn-primary': {
           backgroundColor: theme('colors.primary.600'),
           color: theme('colors.white'),
@@ -261,6 +269,20 @@ module.exports = {
           '&:hover': {
             backgroundColor: theme('colors.primary.600'),
             color: theme('colors.white')
+          }
+        },
+        
+        // Button using CSS variable
+        '.btn-primary-light': {
+          backgroundColor: 'var(--color-primary-light)',
+          color: 'var(--color-gray-800)',
+          padding: `${theme('spacing.3')} ${theme('spacing.6')}`,
+          borderRadius: theme('borderRadius.lg'),
+          fontWeight: theme('fontWeight.medium'),
+          transition: 'all 0.2s ease',
+          '&:hover': {
+            backgroundColor: 'var(--color-gray-100)',
+            transform: 'translateY(-1px)'
           }
         }
       }

@@ -8,13 +8,16 @@ import Swiper from 'swiper/bundle';
 import 'swiper/css/bundle';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import { lozad } from 'lozad';
+import  lozad  from 'lozad';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
+// Import core CSS
+import '../css/style.scss';
+
 // Import custom modules
 import './customizer.js';
-import './navigation.js';
+import { NavigationMenu } from './navigation.js';
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger);
@@ -45,6 +48,7 @@ class TheRosessomTheme {
    * Initialize all components
    */
   initializeComponents() {
+    this.initNavigation();
     this.initAOS();
     this.initLazyLoading();
     this.initSwipers();
@@ -56,6 +60,22 @@ class TheRosessomTheme {
     
     // Custom event for theme initialization complete
     document.dispatchEvent(new CustomEvent('therosessom:initialized'));
+  }
+
+  /**
+   * Initialize navigation menu
+   */
+  initNavigation() {
+    try {
+      this.navigation = new NavigationMenu();
+      
+      // Make navigation accessible globally for debugging
+      window.navigationMenu = this.navigation;
+      
+      console.log('✅ Navigation integrated with theme');
+    } catch (error) {
+      console.warn('Navigation initialization failed:', error);
+    }
   }
 
   /**
@@ -419,6 +439,21 @@ class TheRosessomTheme {
       });
     }, 3000);
   }
+
+  /**
+   * Get navigation instance (for external access)
+   */
+  getNavigation() {
+    return this.navigation;
+  }
+
+  /**
+   * Reinitialize components (useful for dynamic content)
+   */
+  reinitialize() {
+    console.log('🔄 Reinitializing theme components...');
+    this.initializeComponents();
+  }
 }
 
 // Initialize theme
@@ -434,6 +469,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // Customizer preview refresh
     window.wp.customize.selectiveRefresh.bind('widget-updated', () => {
       theme.initializeComponents();
+    });
+  }
+});
+
+// Theme initialization complete event
+document.addEventListener('therosessom:initialized', () => {
+  console.log('🎉 TheRosessom Theme fully initialized');
+  
+  // Debug information
+  if (window.location.hostname === 'localhost' || window.location.hostname.includes('local')) {
+    console.log('🔧 Debug Mode - Theme components:', {
+      theme: !!window.TheRosessomTheme,
+      navigation: !!window.navigationMenu,
+      navigationState: window.navigationMenu?.getState()
     });
   }
 });

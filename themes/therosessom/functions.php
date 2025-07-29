@@ -31,17 +31,6 @@ function therosessom_setup() {
     // Enable support for Post Thumbnails on posts and pages
     add_theme_support('post-thumbnails');
 
-    // Add theme support for selective refresh for widgets
-    add_theme_support('customize-selective-refresh-widgets');
-
-    // Add support for core custom logo
-    add_theme_support('custom-logo', [
-        'height'      => 250,
-        'width'       => 250,
-        'flex-width'  => true,
-        'flex-height' => true,
-    ]);
-
     // Add theme support for HTML5 markup
     add_theme_support('html5', [
         'search-form',
@@ -54,12 +43,6 @@ function therosessom_setup() {
         'navigation-widgets',
     ]);
 
-    // Set up the WordPress core custom background feature
-    add_theme_support('custom-background', [
-        'default-color' => 'ffffff',
-        'default-image' => '',
-    ]);
-
     // Add theme support for WordPress block styles
     add_theme_support('wp-block-styles');
 
@@ -69,7 +52,7 @@ function therosessom_setup() {
     // Add support for wide alignment
     add_theme_support('align-wide');
 
-    // Register navigation menus (한 번만!)
+    // Register navigation menus
     register_nav_menus([
         'primary-menu' => esc_html__('Primary Menu', 'therosessom'),
         'footer-menu'  => esc_html__('Footer Menu', 'therosessom'),
@@ -117,6 +100,33 @@ function therosessom_scripts() {
 add_action('wp_enqueue_scripts', 'therosessom_scripts');
 
 /**
+ * Preload critical fonts for performance optimization
+ */
+function therosessom_preload_fonts() {
+    $manifest_path = get_template_directory() . '/dist/.vite/manifest.json';
+
+    if (!file_exists($manifest_path)) {
+        return;
+    }
+
+    $manifest = json_decode(file_get_contents($manifest_path), true);
+
+    $original_font_path = 'assets/fonts/perfectly-nineties.woff2';
+
+    if (!isset($manifest[$original_font_path])) {
+        return;
+    }
+
+    $final_font_path = $manifest[$original_font_path]['file'];
+
+    $font_url = get_template_directory_uri() . '/dist/' . $final_font_path;
+
+    echo '<link rel="preload" href="' . esc_url($font_url) . '" as="font" type="font/woff2" crossorigin="anonymous">' . "\n";
+}
+
+add_action('wp_head', 'therosessom_preload_fonts', 1);
+
+/**
  * Check if Vite development server is running
  */
 function is_vite_server_running() {
@@ -138,7 +148,6 @@ function therosessom_enqueue_build_assets() {
     $manifest_path = get_template_directory() . '/dist/.vite/manifest.json';
     
     if (!file_exists($manifest_path)) {
-        // Fallback to basic stylesheet
         wp_enqueue_style('therosessom-style', get_stylesheet_uri(), [], THEROSESSOM_VERSION);
         return;
     }
@@ -175,41 +184,29 @@ function therosessom_enqueue_build_assets() {
 }
 
 /**
- * Primary menu fallback
- */
-function therosessom_primary_menu_fallback() {
-    if (current_user_can('manage_options')) {
-        echo '<ul class="primary-menu-list fallback-menu">';
-        echo '<li class="menu-item">';
-        echo '<a href="' . esc_url(admin_url('nav-menus.php')) . '" style="color: #dc3545; font-weight: bold;">';
-        echo '⚠️ ' . esc_html__('Setup Primary Menu', 'therosessom');
-        echo '</a>';
-        echo '</li>';
-        echo '</ul>';
-    } else {
-        wp_page_menu([
-            'menu_class' => 'primary-menu-list page-menu',
-            'show_home'  => true,
-        ]);
-    }
-}
-
-/**
- * ACF Pro Integration (옵션 페이지만)
+ * ACF Pro Integration - Options pages only
  */
 if (function_exists('acf_add_options_page')) {
+    // 부모 페이지 등록
     acf_add_options_page([
-        'page_title' => __('Theme Settings', 'therosessom'),
-        'menu_title' => __('Theme Options', 'therosessom'),
-        'menu_slug' => 'theme-settings',
-        'capability' => 'edit_posts',
-        'icon_url' => 'dashicons-admin-generic'
+        'page_title'  => __('Theme Options', 'therosessom'),
+        'menu_title'  => __('Theme Options', 'therosessom'),
+        'menu_slug'   => 'theme-options',
+        'capability'  => 'edit_posts',
+        'icon_url'    => 'dashicons-admin-generic',
+        'redirect'    => true, 
     ]);
-    
+
     acf_add_options_sub_page([
-        'page_title' => __('Site Favicon', 'therosessom'),
-        'menu_title' => __('Site Favicon', 'therosessom'),
-        'parent_slug' => 'theme-settings'
+        'page_title'  => __('Site Settings', 'therosessom'),
+        'menu_title'  => __('Site Settings', 'therosessom'),
+        'parent_slug' => 'theme-options',
+    ]);
+
+    acf_add_options_sub_page([
+        'page_title'  => __('Business Settings', 'therosessom'),
+        'menu_title'  => __('Business Settings', 'therosessom'),
+        'parent_slug' => 'theme-options',
     ]);
 }
 
@@ -244,68 +241,6 @@ function therosessom_optimize_queries($query) {
 add_action('pre_get_posts', 'therosessom_optimize_queries');
 
 /**
- * Custom Walker for navigation menu
- */
-class Therosessom_Walker_Nav_Menu extends Walker_Nav_Menu {
-    
-    function start_lvl(&$output, $depth = 0, $args = null) {
-        $indent = str_repeat("\t", $depth);
-        $output .= "\n$indent<ul class=\"sub-menu\">\n";
-    }
-
-    function end_lvl(&$output, $depth = 0, $args = null) {
-        $indent = str_repeat("\t", $depth);
-        $output .= "$indent</ul>\n";
-    }
-
-    function start_el(&$output, $item, $depth = 0, $args = null, $id = 0) {
-        $indent = ($depth) ? str_repeat("\t", $depth) : '';
-
-        $classes = empty($item->classes) ? array() : (array) $item->classes;
-        $classes[] = 'menu-item-' . $item->ID;
-
-        if (in_array('current-menu-item', $classes)) {
-            $classes[] = 'current';
-        }
-        
-        if (in_array('menu-item-has-children', $classes)) {
-            $classes[] = 'has-dropdown';
-        }
-
-        $class_names = join(' ', apply_filters('nav_menu_css_class', array_filter($classes), $item, $args));
-        $class_names = $class_names ? ' class="' . esc_attr($class_names) . '"' : '';
-
-        $id = apply_filters('nav_menu_item_id', 'menu-item-'. $item->ID, $item, $args);
-        $id = $id ? ' id="' . esc_attr($id) . '"' : '';
-
-        $output .= $indent . '<li' . $id . $class_names .'>';
-
-        $attributes = ! empty($item->attr_title) ? ' title="'  . esc_attr($item->attr_title) .'"' : '';
-        $attributes .= ! empty($item->target) ? ' target="' . esc_attr($item->target) .'"' : '';
-        $attributes .= ! empty($item->xfn) ? ' rel="' . esc_attr($item->xfn) .'"' : '';
-        $attributes .= ! empty($item->url) ? ' href="' . esc_attr($item->url) .'"' : '';
-        $attributes .= ' class="menu-link"';
-
-        $item_output = (isset($args->before) ? $args->before : '');
-        $item_output .= '<a' . $attributes .'>';
-        $item_output .= (isset($args->link_before) ? $args->link_before : '') . apply_filters('the_title', $item->title, $item->ID) . (isset($args->link_after) ? $args->link_after : '');
-        
-        if (in_array('menu-item-has-children', $classes)) {
-            $item_output .= ' <span class="dropdown-arrow">▼</span>';
-        }
-        
-        $item_output .= '</a>';
-        $item_output .= (isset($args->after) ? $args->after : '');
-
-        $output .= apply_filters('walker_nav_menu_start_el', $item_output, $item, $depth, $args);
-    }
-
-    function end_el(&$output, $item, $depth = 0, $args = null) {
-        $output .= "</li>\n";
-    }
-}
-
-/**
  * Helper function to check if ACF is active
  */
 function therosessom_is_acf_active() {
@@ -327,3 +262,17 @@ function therosessom_asset($path) {
     
     return get_template_directory_uri() . '/dist/' . $path;
 }
+
+
+/**
+ * Hide specific Appearance submenus - Safe version
+ */
+add_action('admin_menu', function() {
+    remove_submenu_page('themes.php', 'customize.php');   
+    remove_submenu_page('themes.php', 'customize.php?return=' . urlencode($_SERVER['REQUEST_URI']));    
+    remove_submenu_page('themes.php', 'patterns.php');       
+    remove_submenu_page('themes.php', 'site-editor.php?path=%2Fpatterns');
+    remove_submenu_page('themes.php', 'edit.php?post_type=wp_template_part');
+    remove_submenu_page('themes.php', 'themes.php?page=gutenberg-edit-site&path=%2Fpatterns');
+    remove_submenu_page('themes.php', 'theme-editor.php');
+}, 999);

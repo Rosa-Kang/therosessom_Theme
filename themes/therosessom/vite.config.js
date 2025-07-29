@@ -1,11 +1,12 @@
 import { defineConfig } from 'vite';
-import { resolve } from 'path';
+import { resolve } from'path';
 import { fileURLToPath, URL } from 'node:url';
 
 // ESM equivalent of __dirname
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 export default defineConfig({
+
   // Entry points for assets
   build: {
     rollupOptions: {
@@ -29,7 +30,8 @@ export default defineConfig({
           if (/\.(woff|woff2|eot|ttf|otf)$/i.test(assetInfo.name)) {
             return `fonts/[name]-[hash].${extType}`;
           }
-          return `assets/[name]-[hash].${extType}`;
+          // Fallback for other assets that might be directly in publicDir
+          return `assets/[name]-[hash].${extType}`; 
         },
         chunkFileNames: 'js/[name]-[hash].js',
         entryFileNames: 'js/[name]-[hash].js'
@@ -46,8 +48,7 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        // Make variables available globally
-        additionalData: `@import "${resolve(__dirname, 'assets/css/variables.scss')}";`
+        // No additionalData needed as variables are now imported via @use in style.scss
       }
     },
     postcss: './postcss.config.js'
@@ -72,12 +73,6 @@ export default defineConfig({
           });
         }
       }
-    },
-    
-    // CORS configuration for WordPress
-    cors: {
-      origin: ['http://jiography.local/'], 
-      credentials: true
     }
   },
   
