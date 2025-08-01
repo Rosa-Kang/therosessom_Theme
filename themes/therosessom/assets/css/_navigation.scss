@@ -1,16 +1,18 @@
 @use 'variables' as *;
 /**
  * Site Navigation - Pure SCSS Variables
+ * Enhanced with wavy effects and current page highlighting
  */
 
-// Mobile menu panel width
+// Mobile Menu Settings Essential 
 $mobile-menu-width: 78%; // 2/3 of screen width
 
-// Prevent scrolling when mobile menu is open
+// Wavy effect variables
+$nav-wave-duration: 0.6s;
+$nav-current-font-weight: 600;
+
 body.menu-open {
   overflow: hidden;
-
-  // Dark overlay for mobile menu
   &::before {
     @media (max-width: #{$breakpoint-md - 1px}) {
       content: '';
@@ -39,6 +41,10 @@ body.menu-open {
   cursor: pointer;
   padding: 0;
 
+  .line:nth-child(3) {
+    width: 22px;
+  }
+
   // Hide on desktop
   @media (min-width: $breakpoint-md) {
     display: none;
@@ -48,13 +54,17 @@ body.menu-open {
     width: 100%;
     height: 1px;
     background-color: $color-gray-800;
-    transition: all $duration-300 $ease-in-out;
+    transition: $transition;
   }
 
   // X animation when toggled
   &.toggled {
+    .line {
+      background-color: $color-white;
+    }
+
     .line:nth-child(2) {
-      transform: translateY(10px) rotate(45deg);
+      transform: translateY(9px) rotate(45deg);
     }
     .line:nth-child(3) {
       opacity: 0;
@@ -84,11 +94,11 @@ body.menu-open {
       right: 0;
       width: $mobile-menu-width;
       height: 100vh;
-      background-color: $color-white;
+      background-color: $color-black;
       z-index: $z-index-modal;
       transform: translateX(100%);
-      transition: transform $duration-300 $ease-in-out;
-      padding: $spacing-48 $spacing-8 $spacing-8;
+      transition: transform 0.3 $ease-in-out;
+      padding: $spacing-48 $spacing-8 $spacing-8 $spacing-16;
       box-shadow: $shadow-xl;
     }
   }
@@ -118,10 +128,52 @@ body.menu-open {
       font-size: $font-size-sm;
       font-weight: $font-weight-medium;
       color: $color-gray-600;
-      transition: color $duration-200 $ease-out;
+      transition: color 0.2 $ease-out;
+      position: relative;
+      overflow: visible; // Allow wavy animation to be fully visible
 
       &:hover {
         color: $color-gray-800;
+      }
+
+      // Focus state for accessibility
+      &:focus-visible {
+        outline: 2px solid $color-gray-800;
+        outline-offset: 4px;
+        border-radius: 2px;
+      }
+
+      // Individual letter styling for wavy effect
+      .letter {
+        display: inline-block;
+        transition: all 0.3 cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transform-origin: center bottom;
+        will-change: transform;
+      }
+
+      // Wavy animation on hover
+      &:hover .letter {
+        animation: menuWave $nav-wave-duration ease-in-out forwards;
+        opacity: 0.7;
+      }
+
+      // Staggered animation delays for wave effect
+      &:hover {
+        .letter:nth-child(1) { animation-delay: 0s; }
+        .letter:nth-child(2) { animation-delay: 0.05s; }
+        .letter:nth-child(3) { animation-delay: 0.1s; }
+        .letter:nth-child(4) { animation-delay: 0.15s; }
+        .letter:nth-child(5) { animation-delay: 0.2s; }
+        .letter:nth-child(6) { animation-delay: 0.25s; }
+        .letter:nth-child(7) { animation-delay: 0.3s; }
+        .letter:nth-child(8) { animation-delay: 0.35s; }
+        .letter:nth-child(9) { animation-delay: 0.4s; }
+        .letter:nth-child(10) { animation-delay: 0.45s; }
+        .letter:nth-child(11) { animation-delay: 0.5s; }
+        .letter:nth-child(12) { animation-delay: 0.55s; }
+        .letter:nth-child(13) { animation-delay: 0.6s; }
+        .letter:nth-child(14) { animation-delay: 0.65s; }
+        .letter:nth-child(15) { animation-delay: 0.7s; }
       }
     }
   }
@@ -135,12 +187,144 @@ body.menu-open {
 
     a {
       font-size: $font-size-xl;
-      color: $color-gray-700;
-      transition: color $duration-200 $ease-out;
+      color: $color-white;
+      transition: color 0.2 $ease-out;
+    }
+  }
+}
 
-      &:hover {
-        color: $color-gray-900;
+// --- Current Page Highlighting ---
+#primary-menu {
+  // Current page styling for both desktop and mobile
+  .current-menu-item > a,
+  .current-page-ancestor > a,
+  .current-menu-ancestor > a,
+  .current-menu-parent > a,
+  .menu-current {
+    // Desktop current page styling
+    @media (min-width: $breakpoint-md) {
+      color: $color-gray-800 !important;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -4px;
+        left: 25%;   
+        right: 25%;  
+        height: 0.5px;
+        background-color: $color-gray-800;
+        transform: scaleX(1);
+        transition: transform 0.2 $ease-out;
+      }
+
+      // Current page items get subtle animation on hover
+      &:hover .letter {
+        animation: menuWaveSubtle $nav-wave-duration ease-in-out forwards;
+        opacity: 0.7;
       }
     }
+
+    // Mobile current page styling
+    @media (max-width: #{$breakpoint-md - 1px}) {
+      font-weight: $nav-current-font-weight;
+      color: $color-white !important;
+      opacity: 1;
+      
+      // Optional: Add accent for mobile current page
+      &::before {
+        content: '→';
+        margin-right: $spacing-2;
+        opacity: 0.8;
+      }
+    }
+  }
+}
+
+// --- Wave Animations ---
+@keyframes menuWave {
+  0%, 100% {
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-8px) scale(1.05) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-12px) scale(1.1) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-8px) scale(1.05) rotate(1deg);
+  }
+}
+
+// Subtle wave for current page items
+@keyframes menuWaveSubtle {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-6px) scale(1.03);
+  }
+}
+
+// Alternative wave effects (can be used by changing animation name)
+@keyframes menuBounce {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-15px) scale(1.1);
+  }
+}
+
+@keyframes menuElastic {
+  0% {
+    transform: scale(1) translateY(0);
+  }
+  30% {
+    transform: scale(1.1) translateY(-10px);
+  }
+  60% {
+    transform: scale(0.95) translateY(-5px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+  }
+}
+
+// --- Accessibility & Performance ---
+// Respect user's motion preferences
+@media (prefers-reduced-motion: reduce) {
+  #primary-menu a {
+    .letter {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  #primary-menu a {
+    &:hover,
+    &.menu-current {
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 4px;
+    }
+  }
+}
+
+// Performance optimization: Pause animations when page is hidden
+.page-hidden #primary-menu a {
+  .letter {
+    animation-play-state: paused;
+  }
+}
+
+.site-branding a {
+  transition: $transition ;
+
+  &:hover {
+    opacity: 0.7;
   }
 }
