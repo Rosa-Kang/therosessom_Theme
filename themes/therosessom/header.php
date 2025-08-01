@@ -33,8 +33,8 @@ $site_logo = get_field('site_logo', 'option');
 <div id="page" class="site">
 	<a class="skip-link screen-reader-text" href="#content"><?php esc_html_e( 'Skip to content', 'therosessom' ); ?></a>
     <div id="content">
-        <header id="masthead" class="site-header w-full bg-primary-light"> <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between h-24"> <div class="site-branding flex-shrink-0">
+        <header id="masthead" class="site-header w-full"> <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16"> <div class="site-branding flex-shrink-0">
                         <?php  if ( $site_logo ) { ?>
                         <div>
                             <?php echo $site_logo; ?>
